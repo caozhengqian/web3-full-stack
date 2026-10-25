@@ -4,7 +4,7 @@ import { useAccount, useSwitchChain } from "wagmi"
 import { anvil } from "wagmi/chains"
 
 import { useReadKerwinTokenBalanceOf } from "@/generated"
-import { formatKwt } from "@/lib/formatToken"
+import { format18 } from "@/lib/formatToken"
 
 function truncate(addr?: string) {
     if (!addr) return ""
@@ -24,7 +24,7 @@ export function KwtBalance() {
         query: { enabled: isConnected && onAnvil && !!address },
     })
 
-    const formatted = data !== undefined ? formatKwt(data) : undefined
+    const formatted = data !== undefined ? format18(data) : undefined
 
     return (
         <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">

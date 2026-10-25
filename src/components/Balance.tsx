@@ -2,7 +2,7 @@
 import { useBalanceSliceStore } from "@/store/useBalanceSliceStore";
 
 export function Balance() {
-  const { TokenWallet, loading, setTokenWallet } = useBalanceSliceStore();
+  const { TokenWallet, loading, setTokenWallet ,EtherWallet, setEtherWallet} = useBalanceSliceStore();
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -13,6 +13,14 @@ export function Balance() {
         className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium disabled:opacity-50 dark:border-zinc-700"
       >
         获取钱包KWT余额
+      </button>
+      <div>TokenWallet：{EtherWallet}</div>
+      <button
+        onClick={() => setEtherWallet()}
+        disabled={loading}
+        className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium disabled:opacity-50 dark:border-zinc-700"
+      >
+        获取钱包以太币余额
       </button>
     </div>
   )

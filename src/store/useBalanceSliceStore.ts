@@ -1,15 +1,15 @@
 import { create } from "zustand";
-import { getAccount, readContract } from "wagmi/actions";
+import { getAccount, getBalance, readContract } from "wagmi/actions";
 import config from "@/rainbowKitConfig";
 import { kerwinTokenAbi, kerwinTokenAddress } from "@/generated";
-import { formatKwt } from "@/lib/formatToken";
+import { format18 } from "@/lib/formatToken";
 
 type ConfigChainId = (typeof config)["chains"][number]["id"];
 
 interface BalanceSliceState {
   TokenWallet: string;
   TokenExchange: number;
-  EtherWallet: number;
+  EtherWallet: string;
   EtherExchange: number;
   loading: boolean;
   setTokenWallet: () => Promise<void>;
@@ -19,9 +19,9 @@ interface BalanceSliceState {
 }
 
 export const useBalanceSliceStore = create<BalanceSliceState>((set) => ({
-  TokenWallet: "0", // 钱包KWT余额（格式化后，已除 10^18）
+  TokenWallet: "0", // 钱包KWT；wei转换，需要字符串，不是数字0
   TokenExchange: 0, // 交易所KWT
-  EtherWallet: 0, // 钱包ETH
+  EtherWallet: "0", // 钱包ETH
   EtherExchange: 0, // 交易所ETH
   loading: false,
   setTokenWallet: async () => {
@@ -47,7 +47,7 @@ export const useBalanceSliceStore = create<BalanceSliceState>((set) => ({
         args: [address],
         chainId: chainId as ConfigChainId,
       });
-      set({ TokenWallet: formatKwt(balance), loading: false });
+      set({ TokenWallet: format18(balance), loading: false });
     } catch (error) {
       set({ loading: false });
       throw error;
@@ -59,7 +59,22 @@ export const useBalanceSliceStore = create<BalanceSliceState>((set) => ({
   },
   setEtherWallet: async () => {
     set({ loading: true });
-    set((state) => ({ EtherWallet: state.EtherWallet, loading: false }));
+    try {
+      const { address, chainId } = getAccount(config);
+      if (!address || !chainId) {
+        set({ loading: false });
+        return;
+      }
+      // 读取钱包原生 ETH 余额（wei，value 为 bigint）
+      const balance = await getBalance(config, {
+        address,
+        chainId: chainId as ConfigChainId,
+      });
+      set({ EtherWallet: format18(balance.value), loading: false });
+    } catch (error) {
+      set({ loading: false });
+      throw error;
+    }
   },
   setEtherExchange: async () => {
     set({ loading: true });
