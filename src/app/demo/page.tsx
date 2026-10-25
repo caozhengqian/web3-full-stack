@@ -2,6 +2,7 @@
 
 import { useCounterStore } from "@/store/useCounterStore";
 import {Balance} from "@/components/Balance";
+import { KwtDeposit } from "@/components/KwtDeposit";
 
 export default function DemoPage() {
   const { count, loading, increment, decrement } = useCounterStore();
@@ -10,6 +11,7 @@ export default function DemoPage() {
     <div className="flex flex-1 flex-col items-center justify-center gap-6 bg-zinc-50 font-sans dark:bg-black">
       <h1 className="text-2xl font-semibold tracking-tight">Zustand Demo</h1>
       <Balance/>
+      <KwtDeposit/>
       <p className="text-6xl font-bold tabular-nums">{count}</p>
 
       <div className="flex gap-3">
