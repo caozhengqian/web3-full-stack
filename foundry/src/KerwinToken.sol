@@ -12,7 +12,7 @@ contract KerwinToken{
     mapping(address=>uint256) public balanceOf;//用户=>余额
     mapping(address =>mapping(address=>uint256))public allowance;// 将币授权给交易所，结构为：{用户账号:{币安:1000，A交易所:2000}}
     constructor(){
-      totalSupply = 1000000*(10**decimals);
+      totalSupply = 1000001*(10**decimals);
       balanceOf[msg.sender] = totalSupply;
     }
     // 第一步：转移金额函数
